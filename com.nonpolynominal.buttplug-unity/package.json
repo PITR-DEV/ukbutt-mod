@@ -1,0 +1,15 @@
+{
+  "name": "com.nonpolynomial.buttplug-unity",
+  "author": {
+    "name": "Nonpolynomial",
+    "email": "kyle@nonpolynomial.com",
+    "url": "https://buttplug.io/"
+  },
+  "version": "2.1.1",
+  "displayName": "Buttplug Unity",
+  "description": "Buttplug Sex Toy Control Library support for Unity. For more info, see https://buttplug.io.",
+  "unity": "2018.2",
+  "publishConfig": {
+    "registry": "https://package.openupm.com"
+  }
+}
