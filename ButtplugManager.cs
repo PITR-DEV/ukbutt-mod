@@ -75,24 +75,28 @@ namespace UKButt
         public static void Vibrate(float originalAmount)
         {
             if (!Instance || Instance.emergencyStop) return;
-            Instance._timeSinceVibes = 0;
-            Instance._unscaledtimeSinceVibes = 0;
+            ResetVibeTimes();
             var amount = Mathf.Clamp(originalAmount, 0, 1);
             Instance.currentSpeed = amount;
         }
 
+        // Used for very subtle vibrations (menu button clicks and dashes)
         public static void Tap(bool isMenu = false)
         {
             if (!Instance || Instance.emergencyStop) return;
             if (isMenu && !PrefsManager.Instance.GetBoolLocal(UKButtProperties.EnableMenuHaptics, true)) return;
-            Instance._timeSinceVibes = Instance.StickForNormal - Instance.SoftStickFor;
-            Instance._unscaledtimeSinceVibes = Instance.StickForNormal - Instance.SoftStickFor;
-            Instance.currentSpeed = 0.1f;
+            ResetVibeTimes();
+            if (Instance.currentSpeed < 0.1f)
+            {
+                Instance.currentSpeed = 0.1f;
+            }
         }
         
         private void Update()
         {
             if (emergencyStop) currentSpeed = 0;
+            
+            UpdateHookArm();
             
             foreach (var buttplugClientDevice in connectedDevices)
             {
@@ -102,6 +106,28 @@ namespace UKButt
 
             if (TimeSinceVibes > StickForNormal) currentSpeed = 0;
             // TODO maybe add gradual falloff?
+        }
+
+        private static void ResetVibeTimes()
+        {
+            Instance._timeSinceVibes = Instance.StickForNormal - Instance.SoftStickFor;
+            Instance._unscaledtimeSinceVibes = Instance.StickForNormal - Instance.SoftStickFor;
+        }
+
+        private void UpdateHookArm()
+        {
+            if (!HookArm.Instance) return;
+            switch (HookArm.Instance.state)
+            {
+                case HookState.Pulling:
+                    Vibrate(0.5f);
+                    ResetVibeTimes();
+                    break;
+                case HookState.Throwing:
+                    Vibrate(0.2f);
+                    ResetVibeTimes();
+                    break;
+            }
         }
         
         private void AddDevice(object sender, DeviceAddedEventArgs args)
