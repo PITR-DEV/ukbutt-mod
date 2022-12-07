@@ -16,8 +16,10 @@ namespace UKButt
         private ButtplugUnityClient unityButtClient;
         private readonly List<ButtplugClientDevice> connectedDevices = new List<ButtplugClientDevice>();
         public float currentSpeed = 0;
-        private UnscaledTimeSince timeSinceVibes;
-
+        private UnscaledTimeSince _unscaledtimeSinceVibes;
+        private TimeSince _timeSinceVibes;
+        private float TimeSinceVibes => PrefsManager.Instance.GetBoolLocal(UKButtProperties.UseUnscaledTime, true) ? (float)_unscaledtimeSinceVibes : (float)_timeSinceVibes;
+        
         // TODO single class to store the defaults for this and the UKButt command prefs editor
         private float StickForNormal => PrefsManager.Instance == null ? 2.0f : PrefsManager.Instance.GetFloatLocal(UKButtProperties.StickForSeconds, 2.0f);
         private float SoftStickFor => PrefsManager.Instance == null ? 0.2f : PrefsManager.Instance.GetFloatLocal(UKButtProperties.TapStickForSeconds, 0.2f);
@@ -33,6 +35,7 @@ namespace UKButt
             harmony.PatchAll(typeof(CheatsPatch)); // Adds the bindable emergency stop cheat
             harmony.PatchAll(typeof(RevolverPatch)); // Intercepts the revolver's firing
             harmony.PatchAll(typeof(DashPatch)); // Intercepts the player dash/dodge
+            harmony.PatchAll(typeof(ButtonPatch)); // Intercepts the button press
 
             // Register the command to the ULTRAKILL console
             GameConsole.Console.Instance.RegisterCommand(new Commands.UKButt());
@@ -69,18 +72,22 @@ namespace UKButt
             }
         }
 
-        public void Vibrate(float originalAmount)
+        public static void Vibrate(float originalAmount)
         {
-            Debug.Log("Intercepted vibration call " + originalAmount);
-            timeSinceVibes = 0;
+            if (!Instance || Instance.emergencyStop) return;
+            Instance._timeSinceVibes = 0;
+            Instance._unscaledtimeSinceVibes = 0;
             var amount = Mathf.Clamp(originalAmount, 0, 1);
-            currentSpeed = amount;
+            Instance.currentSpeed = amount;
         }
 
-        public void Tap()
+        public static void Tap(bool isMenu = false)
         {
-            timeSinceVibes = StickForNormal - SoftStickFor;
-            currentSpeed = 0.1f;
+            if (!Instance || Instance.emergencyStop) return;
+            if (isMenu && !PrefsManager.Instance.GetBoolLocal(UKButtProperties.EnableMenuHaptics, true)) return;
+            Instance._timeSinceVibes = Instance.StickForNormal - Instance.SoftStickFor;
+            Instance._unscaledtimeSinceVibes = Instance.StickForNormal - Instance.SoftStickFor;
+            Instance.currentSpeed = 0.1f;
         }
         
         private void Update()
@@ -93,7 +100,7 @@ namespace UKButt
                 buttplugClientDevice.SendVibrateCmd(currentSpeed * StrengthMultiplier);
             }
 
-            if (timeSinceVibes > StickForNormal) currentSpeed = 0;
+            if (TimeSinceVibes > StickForNormal) currentSpeed = 0;
             // TODO maybe add gradual falloff?
         }
         

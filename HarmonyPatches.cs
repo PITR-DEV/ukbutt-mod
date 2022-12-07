@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using HarmonyLib;
 using UKButt.Commands;
+using UnityEngine.UI;
 
 namespace UKButt
 {
@@ -9,17 +10,17 @@ namespace UKButt
     {
         static void Postfix(float shakeAmount)
         {
-            ButtplugManager.Instance.Vibrate(shakeAmount);
+            ButtplugManager.Vibrate(shakeAmount);
         }
     }
     
     // patch private OnPointerClick
-    [HarmonyPatch(typeof(ShopButton), "OnPointerClick")]
-    public class ShopPatch
+    [HarmonyPatch(typeof(Button), "Press")]
+    public class ButtonPatch
     {
         static void Postfix()
         {
-            ButtplugManager.Instance.Tap();
+            ButtplugManager.Tap(true);
         }
     }
     
@@ -52,11 +53,11 @@ namespace UKButt
         {
             if (shotType == 1)
             {
-                ButtplugManager.Instance.Vibrate(0.5f);
+                ButtplugManager.Vibrate(0.5f);
             }
             else
             {
-                ButtplugManager.Instance.Vibrate(1f);
+                ButtplugManager.Vibrate(1f);
             }
             
         }
@@ -67,7 +68,7 @@ namespace UKButt
     {
         static void Postfix()
         {
-            ButtplugManager.Instance.Tap();
+            ButtplugManager.Tap();
         }
     }
 }
