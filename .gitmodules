@@ -1,0 +1,3 @@
+[submodule "ManagedButtplugIo"]
+	path = ManagedButtplugIo
+	url = https://github.com/Er1807/ManagedButtplugIo.git

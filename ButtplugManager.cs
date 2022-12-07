@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using BepInEx;
-using Buttplug;
-using ButtplugUnity;
+using ButtplugManaged;
 using UnityEngine;
 
 namespace UKButt
@@ -13,7 +13,7 @@ namespace UKButt
         public static ButtplugManager Instance;
         public bool emergencyStop = false;
         
-        private ButtplugUnityClient unityButtClient;
+        private ButtplugClient buttplugClient;
         private readonly List<ButtplugClientDevice> connectedDevices = new List<ButtplugClientDevice>();
         public float currentSpeed = 0;
         private UnscaledTimeSince _unscaledtimeSinceVibes;
@@ -41,34 +41,34 @@ namespace UKButt
             GameConsole.Console.Instance.RegisterCommand(new Commands.UKButt());
 
             // Connect the buttplug.io client
-            RestartClient();
+            Task.Run(RestartClient);
         }
 
         public async void RestartClient()
         {
-            if (unityButtClient != null)
+            if (buttplugClient != null)
             {
                 Debug.Log("Disconnecting from Buttplug server");
-                await unityButtClient.DisconnectAsync();
+                await buttplugClient.DisconnectAsync();
+                buttplugClient = null;
             }
-            
-            unityButtClient = new ButtplugUnityClient("ULTRAKILL");
-            unityButtClient.DeviceAdded += AddDevice;
-            unityButtClient.DeviceRemoved += RemoveDevice;
-            unityButtClient.ScanningFinished += ScanningFinished;
+
+            buttplugClient = new ButtplugClient("ULTRAKILL");
+            buttplugClient.DeviceAdded += AddDevice;
+            buttplugClient.DeviceRemoved += RemoveDevice;
+            buttplugClient.ScanningFinished += ScanningFinished;
             
             Debug.Log("Connecting to Buttplug server");
-            await unityButtClient.ConnectAsync(new ButtplugWebsocketConnectorOptions(new Uri($"{PrefsManager.Instance.GetStringLocal(UKButtProperties.SocketUri, "ws://localhost:12345")}/buttplug")));
+            await buttplugClient.ConnectAsync(new ButtplugWebsocketConnectorOptions(new Uri($"{PrefsManager.Instance.GetStringLocal(UKButtProperties.SocketUri, "ws://localhost:12345")}/buttplug")));
         
-            var startScanningTask = unityButtClient.StartScanningAsync();
+            var startScanningTask = buttplugClient.StartScanningAsync();
             try
             {
                 await startScanningTask;
             }
             catch (ButtplugException ex)
             {
-                Console.WriteLine(
-                    $"Scanning failed: {ex.InnerException.Message}");
+                Debug.LogError($"Scanning failed: {ex.InnerException.Message}");
             }
         }
 
@@ -94,13 +94,14 @@ namespace UKButt
         
         private void Update()
         {
+            if (buttplugClient == null) return;
             if (emergencyStop) currentSpeed = 0;
             
             UpdateHookArm();
             
             foreach (var buttplugClientDevice in connectedDevices)
             {
-                // Debug.Log("Sending vibration to " + buttplugClientDevice.Name + " at " + currentSpeed);
+                if (!buttplugClientDevice.AllowedMessages.ContainsKey("VibrateCmd")) continue;
                 buttplugClientDevice.SendVibrateCmd(currentSpeed * StrengthMultiplier);
             }
 
@@ -149,7 +150,7 @@ namespace UKButt
 
         private void OnDestroy()
         {
-            unityButtClient?.DisconnectAsync().Wait();
+            buttplugClient?.DisconnectAsync().Wait();
         }
     }
 }

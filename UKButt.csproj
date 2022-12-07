@@ -40,26 +40,15 @@
     <Reference Include="BepInEx">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ULTRAKILL\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
-    <Reference Include="Buttplug">
-      <HintPath>com.nonpolynominal.buttplug-unity\Assemblies\Buttplug.dll</HintPath>
+    <Reference Include="ButtplugManaged">
+      <HintPath>lib\ButtplugManaged.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Protobuf">
-      <HintPath>com.nonpolynominal.buttplug-unity\Assemblies\Google.Protobuf.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Buffers">
-      <HintPath>com.nonpolynominal.buttplug-unity\Assemblies\System.Buffers.dll</HintPath>
-    </Reference>
     
     <Reference Include="System.Core" />
-    
-    <Reference Include="System.Memory">
-      <HintPath>com.nonpolynominal.buttplug-unity\Assemblies\System.Memory.dll</HintPath>
-    </Reference>
-    
-    <Reference Include="System.Runtime.CompilerServices.Unsafe">
-      <HintPath>com.nonpolynominal.buttplug-unity\Assemblies\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     
@@ -87,13 +76,14 @@
     <Reference Include="UnityEngine.UI">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ULTRAKILL\ULTRAKILL_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
+    
+    <Reference Include="websocket-sharp">
+      <HintPath>lib\websocket-sharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HarmonyPatches.cs" />
     <Compile Include="ButtplugManager.cs" />
-    <Compile Include="com.nonpolynominal.buttplug-unity\Runtime\ButtplugUnityClient.cs" />
-    <Compile Include="com.nonpolynominal.buttplug-unity\Runtime\ButtplugUnityOptions.cs" />
-    <Compile Include="com.nonpolynominal.buttplug-unity\Runtime\StartExternalProcess.cs" />
     <Compile Include="PluginInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UKButtProperties.cs" />
@@ -103,33 +93,11 @@
     <Compile Include="ULTRAKILL\UKButtStopCheat.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="com.nonpolynominal.buttplug-unity\Assemblies.meta" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Assemblies\Buttplug.dll" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Assemblies\Buttplug.dll.meta" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Assemblies\buttplug_rs_ffi.dll" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Assemblies\buttplug_rs_ffi.dll.meta" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Assemblies\Google.Protobuf.dll" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Assemblies\Google.Protobuf.dll.meta" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Assemblies\System.Buffers.dll" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Assemblies\System.Buffers.dll.meta" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Assemblies\System.Memory.dll" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Assemblies\System.Memory.dll.meta" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Assemblies\System.Runtime.CompilerServices.Unsafe.dll" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Assemblies\System.Runtime.CompilerServices.Unsafe.dll.meta" />
-    <Content Include="com.nonpolynominal.buttplug-unity\CHANGELOG.md" />
-    <Content Include="com.nonpolynominal.buttplug-unity\CHANGELOG.md.meta" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Editor.meta" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Executable.meta" />
-    <Content Include="com.nonpolynominal.buttplug-unity\LICENSE.md" />
-    <Content Include="com.nonpolynominal.buttplug-unity\LICENSE.md.meta" />
-    <Content Include="com.nonpolynominal.buttplug-unity\package.json" />
-    <Content Include="com.nonpolynominal.buttplug-unity\package.json.meta" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Runtime.meta" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Runtime\.keep" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Runtime\ButtplugUnityClient.cs.meta" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Runtime\ButtplugUnityHelper.cs.meta" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Runtime\ButtplugUnityOptions.cs.meta" />
-    <Content Include="com.nonpolynominal.buttplug-unity\Runtime\StartExternalProcess.cs.meta" />
+    <Content Include="lib\Buttplug LICENSE.md" />
+    <Content Include="lib\ButtplugManaged.dll" />
+    <Content Include="lib\ButtplugManaged.pdb" />
+    <Content Include="lib\Newtonsoft.Json.dll" />
+    <Content Include="lib\websocket-sharp.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
  </Project>

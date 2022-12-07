@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using GameConsole;
 
 namespace UKButt.Commands
@@ -58,7 +59,7 @@ namespace UKButt.Commands
             
             Leaf("restart_client", () =>
             {
-                ButtplugManager.Instance.RestartClient();
+                Task.Run(ButtplugManager.Instance.RestartClient);
             });
         }
     }
