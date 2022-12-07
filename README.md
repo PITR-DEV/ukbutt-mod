@@ -6,7 +6,7 @@ UKButt is an official [BepInEx](https://github.com/BepInEx/BepInEx) mod for [ULT
 
 ## Resources
 
-- **[Download Latest Release](/UKButt/UKButt/releases)**
+- **[Download Latest Release](https://github.com/PITR-DEV/ukbutt-mod/releases/latest)**
 - **[Installation](#installation)**
 - **[Running](#running)**
 - **[Configuration](#configuration)**
@@ -33,7 +33,7 @@ The mod connects to Intiface on port 12345 by default, which is the default port
 
 Before starting the game itself, launch Intiface Central and start the Intiface Server with the big Start Server button.
 
-![Intiface Central](images\intiface_central_PDJp72icP1.png)
+![Intiface Central](https://github.com/PITR-DEV/ukbutt-mod/blob/master/images/intiface_central_PDJp72icP1.png?raw=true)
 
 That's where you can configure the server and the devices you want to use.
 
@@ -56,7 +56,7 @@ You can use the `ukbutt` command to list all available commands.
 
 or `ukbutt prefs` to get the list of all available preferences and how to change them.
 
-![Console](images\ULTRAKILL_xkNU4TP8PV.png)
+![Console](https://github.com/PITR-DEV/ukbutt-mod/blob/master/images/ULTRAKILL_xkNU4TP8PV.png?raw=true)
 
 ## Default Values
 
