@@ -23,7 +23,7 @@ UKButt is an official [BepInEx](https://github.com/BepInEx/BepInEx) mod for [ULT
 
 You can also follow one of the [Community](https://youtu.be/meNiXcbPh_s) [Made](https://youtu.be/db3Cwlv-S-8?t=1624) Videos, since BepInEx is commonly used.
 
-Next, download the latest release from the [releases page](/UKButt/UKButt/releases) and extract the dll files into **ULTRAKILL/BepInEx/plugins**.
+Next, download the latest release from the [release page](https://github.com/PITR-DEV/ukbutt-mod/releases/latest) and extract the dll files into **ULTRAKILL/BepInEx/plugins**.
 
 Lastly, you need to install [Intiface Central](https://intiface.com/central/) from buttplug.io.
 
