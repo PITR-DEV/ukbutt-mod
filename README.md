@@ -62,11 +62,11 @@ or `ukbutt prefs` to get the list of all available preferences and how to change
 
 <!-- table -->
 
-| Key                        | Type     | Description                                                            | Default                |
-| -------------------------- | -------- | ---------------------------------------------------------------------- | ---------------------- |
-| `ukbutt.socketUri`         | `string` | The URI of the Intiface Server.                                        | `ws://localhost:12345` |
-| `ukbutt.strength`          | `float`  | The strength of the vibration.                                         | `0.8`                  |
-| `ukbutt.stickForSeconds`   | `float`  | The minimum duration of a vibration. (in seconds)                      | `2.0`                  |
-| `ukbutt.stickForSeconds`   | `float`  | Same as above, but for events marked as subtle.                        | `0.2`                  |
-| `ukbutt.useUnscaledTime`   | `bool`   | Whether to use unscaled (real) time for the duration of the vibration. | `false`                |
-| `ukbutt.enableMenuHaptics` | `bool`   | Whether to enable haptics in the main menu.                            | `true`                 |
+| Key                         | Type     | Description                                                            | Default                |
+| --------------------------- | -------- | ---------------------------------------------------------------------- | ---------------------- |
+| `ukbutt.socketUri`          | `string` | The URI of the Intiface Server.                                        | `ws://localhost:12345` |
+| `ukbutt.strength`           | `float`  | The strength of the vibration.                                         | `0.8`                  |
+| `ukbutt.stickForSeconds`    | `float`  | The minimum duration of a vibration. (in seconds)                      | `2.0`                  |
+| `ukbutt.tapStickForSeconds` | `float`  | Same as above, but for events marked as subtle.                        | `0.2`                  |
+| `ukbutt.useUnscaledTime`    | `bool`   | Whether to use unscaled (real) time for the duration of the vibration. | `false`                |
+| `ukbutt.enableMenuHaptics`  | `bool`   | Whether to enable haptics in the main menu.                            | `true`                 |
