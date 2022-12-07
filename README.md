@@ -12,6 +12,7 @@ UKButt is an official [BepInEx](https://github.com/BepInEx/BepInEx) mod for [ULT
 - **[Configuration](#configuration)**
 - **[Default Values](#default-values)**
 - **[The buttplug.io standard](https://buttplug.io/)**
+- **[Buttplug.io/Intiface Discord Server (for support questions)](https://discord.buttplug.io)**
 
 ## Video
 
@@ -70,3 +71,9 @@ or `ukbutt prefs` to get the list of all available preferences and how to change
 | `ukbutt.tapStickForSeconds` | `float`  | Same as above, but for events marked as subtle.                        | `0.2`                  |
 | `ukbutt.useUnscaledTime`    | `bool`   | Whether to use unscaled (real) time for the duration of the vibration. | `false`                |
 | `ukbutt.enableMenuHaptics`  | `bool`   | Whether to enable haptics in the main menu.                            | `true`                 |
+
+## Support
+
+If you have issues installing or using Intiface Central, you can either [visit the Buttplug.io discord](https://discord.buttplug.io) or [DM the @buttplugio twitter account](https://twitter.com/buttplugio).
+
+If you need a list of hardware supported by Intiface Central, [visit IOSTIndex.com, which has a full list of supported hardware](https://iostindex.com/?filter0Availability=Available,DIY&filter1Connection=Digital&filter2ButtplugSupport=4).
