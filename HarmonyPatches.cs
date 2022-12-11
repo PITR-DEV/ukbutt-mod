@@ -10,6 +10,7 @@ namespace UKButt
     {
         static void Postfix(float shakeAmount)
         {
+            if (!ButtplugManager.ForwardPatchedEvents) return;
             ButtplugManager.Vibrate(shakeAmount);
         }
     }
@@ -20,6 +21,7 @@ namespace UKButt
     {
         static void Postfix()
         {
+            if (!ButtplugManager.ForwardPatchedEvents) return;
             ButtplugManager.Tap(true);
         }
     }
@@ -30,15 +32,17 @@ namespace UKButt
     {
         static void Postfix()
         {
-            // Register the ULTRAKILL cheat
+            // Register ULTRAKILL cheats
             CheatsManager.Instance.RegisterExternalCheat(new UKButtStopCheat());
+            CheatsManager.Instance.RegisterExternalCheat(new UKButtCycleMode());
             CheatBinds.Instance.RestoreBinds(new Dictionary<string, List<ICheat>>
             {
                 {
                     "EXTERNAL",
                     new List<ICheat>
                     {
-                        new UKButtStopCheat()
+                        new UKButtStopCheat(),
+                        new UKButtCycleMode()
                     }
                 }
             });
@@ -51,6 +55,7 @@ namespace UKButt
     {
         static void Postfix(int shotType = 1)
         {
+            if (!ButtplugManager.ForwardPatchedEvents) return;
             if (shotType == 1)
             {
                 ButtplugManager.Vibrate(0.5f);
@@ -68,7 +73,26 @@ namespace UKButt
     {
         static void Postfix()
         {
+            if (!ButtplugManager.ForwardPatchedEvents) return;
             ButtplugManager.Tap();
+        }
+    }
+    
+    [HarmonyPatch(typeof(StyleHUD), "AscendRank")]
+    public class StyleAscendRank
+    {
+        static void Postfix()
+        {
+            ButtplugManager.Instance.currentRank = StyleHUD.Instance.rankIndex;
+        }
+    }
+    
+    [HarmonyPatch(typeof(StyleHUD), "DescendRank")]
+    public class StyleDescendRank
+    {
+        static void Postfix()
+        {
+            ButtplugManager.Instance.currentRank = StyleHUD.Instance.rankIndex;
         }
     }
 }

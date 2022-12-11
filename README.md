@@ -11,6 +11,7 @@ UKButt is an official [BepInEx](https://github.com/BepInEx/BepInEx) mod for [ULT
 - **[Running](#running)**
 - **[Configuration](#configuration)**
 - **[Default Values](#default-values)**
+- **[Input Modes](#inputmodes)**
 - **[The buttplug.io standard](https://buttplug.io/)**
 - **[Buttplug.io/Intiface Discord Server (for support questions)](https://discord.buttplug.io)**
 
@@ -71,6 +72,19 @@ or `ukbutt prefs` to get the list of all available preferences and how to change
 | `ukbutt.tapStickForSeconds` | `float`  | Same as above, but for events marked as subtle.                        | `0.2`                  |
 | `ukbutt.useUnscaledTime`    | `bool`   | Whether to use unscaled (real) time for the duration of the vibration. | `false`                |
 | `ukbutt.enableMenuHaptics`  | `bool`   | Whether to enable haptics in the main menu.                            | `true`                 |
+| `ukbutt.inputMode`          | `int`    | The current [InputMode](#inputmodes).                                  | `1`                    |
+
+## InputModes
+
+<!-- table -->
+
+| Index | Description        |
+| ----- | ------------------ |
+| `0`   | Nothing            |
+| `1`   | Varied (_default_) |
+| `2`   | Continuous Rank    |
+
+You can change the input mode in-game by using `prefs set_local int ukbutt.inputMode <index>`
 
 ## Support
 

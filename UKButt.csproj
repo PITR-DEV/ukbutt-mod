@@ -90,6 +90,7 @@
     <Compile Include="ULTRAKILL\Helpers\CommandHelper.cs" />
     <Compile Include="ULTRAKILL\Helpers\PrefsManagerHelper.cs" />
     <Compile Include="ULTRAKILL\UKButt.cs" />
+    <Compile Include="ULTRAKILL\UKButtCycleMode.cs" />
     <Compile Include="ULTRAKILL\UKButtStopCheat.cs" />
   </ItemGroup>
   <ItemGroup>

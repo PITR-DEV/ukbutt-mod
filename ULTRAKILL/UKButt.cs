@@ -55,6 +55,13 @@ namespace UKButt.Commands
                     Type = typeof(float),
                     Default = "0.2"
                 },
+                new PrefReference
+                {
+                    Key = UKButtProperties.InputMode,
+                    Local = true,
+                    Type = typeof(int),
+                    Default = "1"
+                },
             });
             
             Leaf("restart_client", () =>

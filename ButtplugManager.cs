@@ -12,18 +12,23 @@ namespace UKButt
     {
         public static ButtplugManager Instance;
         public bool emergencyStop = false;
-        
+
         private ButtplugClient buttplugClient;
         private readonly List<ButtplugClientDevice> connectedDevices = new List<ButtplugClientDevice>();
+
         public float currentSpeed = 0;
-        private UnscaledTimeSince _unscaledtimeSinceVibes;
+        public float currentRank = 0;
+
+        private UnscaledTimeSince _unscaledTimeSinceVibes;
         private TimeSince _timeSinceVibes;
-        private float TimeSinceVibes => PrefsManager.Instance.GetBoolLocal(UKButtProperties.UseUnscaledTime, true) ? (float)_unscaledtimeSinceVibes : (float)_timeSinceVibes;
-        
+        private float TimeSinceVibes => PrefsManager.Instance.GetBoolLocal(UKButtProperties.UseUnscaledTime, true) ? (float)_unscaledTimeSinceVibes : (float)_timeSinceVibes;
+
         // TODO single class to store the defaults for this and the UKButt command prefs editor
         private float StickForNormal => PrefsManager.Instance == null ? 2.0f : PrefsManager.Instance.GetFloatLocal(UKButtProperties.StickForSeconds, 2.0f);
         private float SoftStickFor => PrefsManager.Instance == null ? 0.2f : PrefsManager.Instance.GetFloatLocal(UKButtProperties.TapStickForSeconds, 0.2f);
         private float StrengthMultiplier => PrefsManager.Instance == null ? 0.8f : PrefsManager.Instance.GetFloatLocal(UKButtProperties.Strength, 0.8f);
+        public InputMode InputMode => (InputMode)PrefsManager.Instance.GetIntLocal(UKButtProperties.InputMode, (int)InputMode.Varied);
+        public static bool ForwardPatchedEvents => Instance != null && Instance.InputMode == InputMode.Varied;
 
         private void Awake()
         {
@@ -36,6 +41,10 @@ namespace UKButt
             harmony.PatchAll(typeof(RevolverPatch)); // Intercepts the revolver's firing
             harmony.PatchAll(typeof(DashPatch)); // Intercepts the player dash/dodge
             harmony.PatchAll(typeof(ButtonPatch)); // Intercepts the button press
+
+            // Rank based input mode
+            harmony.PatchAll(typeof(StyleAscendRank));
+            harmony.PatchAll(typeof(StyleDescendRank));
 
             // Register the command to the ULTRAKILL console
             GameConsole.Console.Instance.RegisterCommand(new Commands.UKButt());
@@ -57,10 +66,10 @@ namespace UKButt
             buttplugClient.DeviceAdded += AddDevice;
             buttplugClient.DeviceRemoved += RemoveDevice;
             buttplugClient.ScanningFinished += ScanningFinished;
-            
+
             Debug.Log("Connecting to Buttplug server");
             await buttplugClient.ConnectAsync(new ButtplugWebsocketConnectorOptions(new Uri($"{PrefsManager.Instance.GetStringLocal(UKButtProperties.SocketUri, "ws://localhost:12345")}/buttplug")));
-        
+
             var startScanningTask = buttplugClient.StartScanningAsync();
             try
             {
@@ -91,28 +100,30 @@ namespace UKButt
                 Instance.currentSpeed = 0.1f;
             }
         }
-        
+
         private void Update()
         {
             if (buttplugClient == null) return;
             if (emergencyStop) currentSpeed = 0;
-            
-            UpdateHookArm();
-            
+
+
+            if (InputMode == InputMode.Varied) UpdateHookArm();
+            else if (InputMode == InputMode.ContinuousRank) currentSpeed = currentRank / 8f;
+
             foreach (var buttplugClientDevice in connectedDevices)
             {
                 if (!buttplugClientDevice.AllowedMessages.ContainsKey("VibrateCmd")) continue;
                 buttplugClientDevice.SendVibrateCmd(currentSpeed * StrengthMultiplier);
             }
 
-            if (TimeSinceVibes > StickForNormal) currentSpeed = 0;
-            // TODO maybe add gradual falloff?
+            if (TimeSinceVibes > StickForNormal && InputMode == InputMode.Varied) currentSpeed = 0;
+            else if (InputMode == InputMode.None) currentSpeed = 0;
         }
 
         private static void ResetVibeTimes()
         {
             Instance._timeSinceVibes = Instance.StickForNormal - Instance.SoftStickFor;
-            Instance._unscaledtimeSinceVibes = Instance.StickForNormal - Instance.SoftStickFor;
+            Instance._unscaledTimeSinceVibes = Instance.StickForNormal - Instance.SoftStickFor;
         }
 
         private void UpdateHookArm()
@@ -130,19 +141,19 @@ namespace UKButt
                     break;
             }
         }
-        
+
         private void AddDevice(object sender, DeviceAddedEventArgs args)
         {
             Debug.Log("Device Added: " + args.Device.Name);
             connectedDevices.Add(args.Device);
         }
-        
+
         private void RemoveDevice(object sender, DeviceRemovedEventArgs args)
         {
             Debug.Log("Device Removed: " + args.Device.Name);
             connectedDevices.Remove(args.Device);
         }
-        
+
         private void ScanningFinished(object sender, EventArgs args)
         {
             Debug.Log("Scanning Finished");
