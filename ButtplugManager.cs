@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BepInEx;
@@ -18,6 +18,7 @@ namespace UKButt
 
         public float currentSpeed = 0;
         public float currentRank = 0;
+        public float currentLinearTime = 0;
 
         private UnscaledTimeSince _unscaledTimeSinceVibes;
         private TimeSince _timeSinceVibes;
@@ -31,11 +32,29 @@ namespace UKButt
         private float StrengthMultiplier => PrefsManager.Instance == null ? 0.8f : PrefsManager.Instance.GetFloatLocal(UKButtProperties.Strength, 0.8f);
         public InputMode InputMode => (InputMode)PrefsManager.Instance.GetIntLocal(UKButtProperties.InputMode, (int)InputMode.Varied);
         public static bool ForwardPatchedEvents => Instance != null && Instance.InputMode == InputMode.Varied;
+        
+        private float LinearPosMin => PrefsManager.Instance == null ? 0.1f : PrefsManager.Instance.GetFloatLocal(UKButtProperties.LinearPosMin, 0.1f);
+        private float LinearPosMax => PrefsManager.Instance == null ? 0.9f : PrefsManager.Instance.GetFloatLocal(UKButtProperties.LinearPosMax, 0.9f);
+        private float LinearTimeMin => PrefsManager.Instance == null ? 0.3f : PrefsManager.Instance.GetFloatLocal(UKButtProperties.LinearTimeMin, 0.3f);
+        private float LinearTimeMax => PrefsManager.Instance == null ? 1.5f : PrefsManager.Instance.GetFloatLocal(UKButtProperties.LinearTimeMax, 1.5f);
+
+        private bool StrokeWhileIdle => PrefsManager.Instance == null ? false : PrefsManager.Instance.GetBoolLocal(UKButtProperties.StrokeWhileIdle, false);
+
+        // Toggle for movement direction state
+        private bool _moveMax = true;
+
+        // Current setting for stroke time, recalculated based on rank at the end of each stroke
+        private float _moveTime;
+
+        // Timer for calculating stroke command frequency
+        private TimeSince _timeSinceLastMove;
 
         private void Awake()
         {
             Logger.LogInfo("Initializing UKButt");
             Instance = this;
+            // Start at the slowest Linear time.
+            _moveTime = LinearTimeMax;
 
             var harmony = HarmonyLib.Harmony.CreateAndPatchAll(typeof(CameraPatch));
             harmony.PatchAll(typeof(CameraPatch)); // Intercepts shake calls
@@ -122,6 +141,31 @@ namespace UKButt
                     {
                         buttplugClientDevice.SendVibrateCmd(Math.Min(currentSpeed * StrengthMultiplier, 1.0));
                     }
+                    // Only trigger stroker movement if we're using continuous rank mode. Variable mode doesn't make sense for this.
+                    if (InputMode == InputMode.ContinuousRank && (StrokeWhileIdle || currentSpeed > 0.00001)) {
+                        if (buttplugClientDevice.AllowedMessages.ContainsKey("LinearCmd"))
+                        {
+                            if (_timeSinceLastMove > _moveTime)
+                            {
+                                _moveTime = Math.Max(LinearTimeMax - ((LinearTimeMax - LinearTimeMin) * (currentSpeed * StrengthMultiplier)), LinearTimeMin);
+                                buttplugClientDevice.SendLinearCmd((uint)(1000 * _moveTime), _moveMax ? LinearPosMin : LinearPosMax);
+                            }
+                        }
+                    } 
+                    else
+                    {
+                        // This resets our move time so that once MoveWhileIdle or speed goes > 1, we'll be sure to actually trigger a command.
+                        _moveTime = 0;
+                    }
+                }
+                // On the extremely rare chance someone has multiple linear devices, don't reset values
+                // until after commands have been sent to all of them.
+                //
+                // Also, don't run this if we're not stroking already.
+                if (_moveTime > 0 && _timeSinceLastMove > _moveTime)
+                {
+                    _timeSinceLastMove = 0;
+                    _moveMax = !_moveMax;
                 }
                 _timeSinceVibeUpdate = 0;
             }
