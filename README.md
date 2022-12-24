@@ -91,6 +91,15 @@ or `ukbutt prefs` to get the list of all available preferences and how to change
 
 You can change the input mode in-game by using `prefs set_local int ukbutt.inputMode <index>`
 
+Mode interaction with hardware:
+
+* Varied
+  * Vibration will be triggered on certain actions, including shooting, doors, sliding, menu haptics (if set), etc...
+  * No effect on strokers
+* Continuous Rank
+  * Vibration speed or stroker oscillation frequency is set by current style rank. The higher the
+    rank, the faster the vibration or stroking.
+
 ## Support
 
 If you have issues installing or using Intiface Central, you can either [visit the Buttplug.io discord](https://discord.buttplug.io) or [DM the @buttplugio twitter account](https://twitter.com/buttplugio).
