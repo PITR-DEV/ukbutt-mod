@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BepInEx;
@@ -118,8 +118,10 @@ namespace UKButt
             {
                 foreach (var buttplugClientDevice in connectedDevices)
                 {
-                    if (!buttplugClientDevice.AllowedMessages.ContainsKey("VibrateCmd")) continue;
-                    buttplugClientDevice.SendVibrateCmd(currentSpeed * StrengthMultiplier);
+                    if (buttplugClientDevice.AllowedMessages.ContainsKey("VibrateCmd"))
+                    {
+                        buttplugClientDevice.SendVibrateCmd(Math.Min(currentSpeed * StrengthMultiplier, 1.0));
+                    }
                 }
                 _timeSinceVibeUpdate = 0;
             }
