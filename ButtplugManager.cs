@@ -21,6 +21,8 @@ namespace UKButt
 
         private UnscaledTimeSince _unscaledTimeSinceVibes;
         private TimeSince _timeSinceVibes;
+        private TimeSince _timeSinceVibeUpdate;
+
         private float TimeSinceVibes => PrefsManager.Instance.GetBoolLocal(UKButtProperties.UseUnscaledTime, true) ? (float)_unscaledTimeSinceVibes : (float)_timeSinceVibes;
 
         // TODO single class to store the defaults for this and the UKButt command prefs editor
@@ -110,10 +112,16 @@ namespace UKButt
             if (InputMode == InputMode.Varied) UpdateHookArm();
             else if (InputMode == InputMode.ContinuousRank) currentSpeed = currentRank / 8f;
 
-            foreach (var buttplugClientDevice in connectedDevices)
+            // This shouldn't be run at more than 10hz, bluetooth can't keep up. Repeated commands will be
+            // ignored in Buttplug, but quick updates can still cause lag.
+            if (_timeSinceVibeUpdate > 0.10)
             {
-                if (!buttplugClientDevice.AllowedMessages.ContainsKey("VibrateCmd")) continue;
-                buttplugClientDevice.SendVibrateCmd(currentSpeed * StrengthMultiplier);
+                foreach (var buttplugClientDevice in connectedDevices)
+                {
+                    if (!buttplugClientDevice.AllowedMessages.ContainsKey("VibrateCmd")) continue;
+                    buttplugClientDevice.SendVibrateCmd(currentSpeed * StrengthMultiplier);
+                }
+                _timeSinceVibeUpdate = 0;
             }
 
             if (TimeSinceVibes > StickForNormal && InputMode == InputMode.Varied) currentSpeed = 0;
