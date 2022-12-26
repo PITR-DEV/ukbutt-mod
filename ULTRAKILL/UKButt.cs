@@ -62,6 +62,41 @@ namespace UKButt.Commands
                     Type = typeof(int),
                     Default = "1"
                 },
+                new PrefReference
+                {
+                    Key = UKButtProperties.LinearPosMin,
+                    Local = true,
+                    Type = typeof(float),
+                    Default = "0.1"
+                },
+                new PrefReference
+                {
+                    Key = UKButtProperties.LinearPosMax,
+                    Local = true,
+                    Type = typeof(float),
+                    Default = "0.9"
+                },
+                new PrefReference
+                {
+                    Key = UKButtProperties.LinearTimeMin,
+                    Local = true,
+                    Type = typeof(float),
+                    Default = "0.3"
+                },
+                new PrefReference
+                {
+                    Key = UKButtProperties.LinearTimeMax,
+                    Local = true,
+                    Type = typeof(float),
+                    Default = "1.5"
+                },
+                new PrefReference
+                {
+                    Key = UKButtProperties.StrokeWhileIdle,
+                    Local = true,
+                    Type = typeof(bool),
+                    Default = "False"
+                },
             });
             
             Leaf("restart_client", () =>

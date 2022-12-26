@@ -64,15 +64,20 @@ or `ukbutt prefs` to get the list of all available preferences and how to change
 
 <!-- table -->
 
-| Key                         | Type     | Description                                                            | Default                |
-| --------------------------- | -------- | ---------------------------------------------------------------------- | ---------------------- |
-| `ukbutt.socketUri`          | `string` | The URI of the Intiface Server.                                        | `ws://localhost:12345` |
-| `ukbutt.strength`           | `float`  | The strength of the vibration.                                         | `0.8`                  |
-| `ukbutt.stickForSeconds`    | `float`  | The minimum duration of a vibration. (in seconds)                      | `2.0`                  |
-| `ukbutt.tapStickForSeconds` | `float`  | Same as above, but for events marked as subtle.                        | `0.2`                  |
-| `ukbutt.useUnscaledTime`    | `bool`   | Whether to use unscaled (real) time for the duration of the vibration. | `false`                |
-| `ukbutt.enableMenuHaptics`  | `bool`   | Whether to enable haptics in the main menu.                            | `true`                 |
-| `ukbutt.inputMode`          | `int`    | The current [InputMode](#inputmodes).                                  | `1`                    |
+| Key                         | Type     | Description                                                             | Default                |
+| --------------------------- | -------- | ----------------------------------------------------------------------- | ---------------------- |
+| `ukbutt.socketUri`          | `string` | The URI of the Intiface Server.                                         | `ws://localhost:12345` |
+| `ukbutt.strength`           | `float`  | The strength of the vibration.                                          | `0.8`                  |
+| `ukbutt.stickForSeconds`    | `float`  | The minimum duration of a vibration. (in seconds)                       | `2.0`                  |
+| `ukbutt.tapStickForSeconds` | `float`  | Same as above, but for events marked as subtle.                         | `0.2`                  |
+| `ukbutt.useUnscaledTime`    | `bool`   | Whether to use unscaled (real) time for the duration of the vibration.  | `false`                |
+| `ukbutt.enableMenuHaptics`  | `bool`   | Whether to enable haptics in the main menu.                             | `true`                 |
+| `ukbutt.inputMode`          | `int`    | The current [InputMode](#inputmodes).                                   | `1`                    |
+| `ukbutt.strokeWhileIdle`    | `bool`   | If in menu or rank == 0, stroke at lowest speed (rank mode only)        | `false`                |
+| `ukbutt.linearPosMin`       | `float`  | Lowest position for stroker movement (rank mode only)                   | `0.1`                  |
+| `ukbutt.linearPosMax`       | `float`  | Highest position for stroker movement (rank mode only)                  | `0.9`                  |
+| `ukbutt.linearTimeMin`      | `float`  | Stroker frequency timing in seconds (rank at ULTRAKILL, rank mode only) | `0.3`                  |
+| `ukbutt.linearTimeMax`      | `float`  | Stroker frequency timing in seconds (rank at None/Idle, rank mode only) | `1.5`                  |
 
 ## InputModes
 
@@ -85,6 +90,15 @@ or `ukbutt prefs` to get the list of all available preferences and how to change
 | `2`   | Continuous Rank    |
 
 You can change the input mode in-game by using `prefs set_local int ukbutt.inputMode <index>`
+
+Mode interaction with hardware:
+
+* Varied
+  * Vibration will be triggered on certain actions, including shooting, doors, sliding, menu haptics (if set), etc...
+  * No effect on strokers
+* Continuous Rank
+  * Vibration speed or stroker oscillation frequency is set by current style rank. The higher the
+    rank, the faster the vibration or stroking.
 
 ## Support
 
