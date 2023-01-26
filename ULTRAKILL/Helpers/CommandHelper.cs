@@ -78,14 +78,14 @@ namespace GameConsole
                                 valueString = currentValue ? "True" : "False";
                             }
 
-                            Console.Instance.PrintLine($"- <color={KeyColor}>{p.Key}</color>: <color={ValueColor}>{valueString}</color>   [<color={TypeColor}>float</color>] {isLocalString}");
+                            Console.Instance.PrintLine($"- <color={KeyColor}>{p.Key}</color>: <color={ValueColor}>{valueString}</color>   [<color={TypeColor}>bool</color>] {isLocalString}");
                         }
                         else if (p.Type == typeof(string))
                         {
                             var currentValue = p.Local
                                 ? PrefsManager.Instance.GetStringLocal(p.Key)
                                 : PrefsManager.Instance.GetString(p.Key);
-                            Console.Instance.PrintLine($"- <color={KeyColor}>{p.Key}</color>: <color={ValueColor}>\"{(string.IsNullOrEmpty(currentValue) ? p.Default : currentValue)}\"</color>   [<color={TypeColor}>float</color>] {isLocalString}");
+                            Console.Instance.PrintLine($"- <color={KeyColor}>{p.Key}</color>: <color={ValueColor}>\"{(string.IsNullOrEmpty(currentValue) ? p.Default : currentValue)}\"</color>   [<color={TypeColor}>string</color>] {isLocalString}");
                         }
                         else
                         {
@@ -93,8 +93,8 @@ namespace GameConsole
                         }
                     }
                     
-                    Console.Instance.PrintLine($"You can use `<color=#7df59d>prefs set <type> <value></color>` to change a pref");
-                    Console.Instance.PrintLine($"or `<color=#7df59d>prefs set_local <type> <value></color>` to change a <color={KeyColor}>local</color> pref. (it matters)");
+                    Console.Instance.PrintLine($"You can use `<color=#7df59d>prefs set <type> <pref> <value></color>` to change a pref");
+                    Console.Instance.PrintLine($"or `<color=#7df59d>prefs set_local <type> <pref> <value></color>` to change a <color=red>LOCAL</color> pref. (it matters)");
                     // Console.Instance.PrintLine($"`<color=#c1e6f7>{Name.ToLower()} prefs</color>` is <color=orange>different from</color> `<color=#c1e6f7>prefs</color>`");
                     
                 });

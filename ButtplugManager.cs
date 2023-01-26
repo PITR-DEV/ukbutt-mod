@@ -129,7 +129,11 @@ namespace UKButt
 
 
             if (InputMode == InputMode.Varied) UpdateHookArm();
-            else if (InputMode == InputMode.ContinuousRank) currentSpeed = currentRank / 8f;
+            else if (InputMode == InputMode.ContinuousRank)
+            {
+                if (StyleHUD.Instance == null) currentRank = 0;
+                currentSpeed = currentRank / 8f;
+            }
 
             // This shouldn't be run at more than 10hz, bluetooth can't keep up. Repeated commands will be
             // ignored in Buttplug, but quick updates can still cause lag.

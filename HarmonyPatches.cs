@@ -83,7 +83,14 @@ namespace UKButt
     {
         static void Postfix()
         {
-            ButtplugManager.Instance.currentRank = StyleHUD.Instance.rankIndex;
+            if (!StyleHUD.Instance)
+            {
+                ButtplugManager.Instance.currentRank = 0;
+                return;
+            }
+            var styleMeter = Traverse.Create(StyleHUD.Instance).Field("currentMeter").GetValue<float>();
+            if (styleMeter > 0) ButtplugManager.Instance.currentRank = StyleHUD.Instance.rankIndex + 1;
+            else ButtplugManager.Instance.currentRank = 0;
         }
     }
     
@@ -92,7 +99,14 @@ namespace UKButt
     {
         static void Postfix()
         {
-            ButtplugManager.Instance.currentRank = StyleHUD.Instance.rankIndex;
+            if (!StyleHUD.Instance)
+            {
+                ButtplugManager.Instance.currentRank = 0;
+                return;
+            }
+            var styleMeter = Traverse.Create(StyleHUD.Instance).Field("currentMeter").GetValue<float>();
+            if (styleMeter > 0) ButtplugManager.Instance.currentRank = StyleHUD.Instance.rankIndex + 1;
+            else ButtplugManager.Instance.currentRank = 0;
         }
     }
 }
