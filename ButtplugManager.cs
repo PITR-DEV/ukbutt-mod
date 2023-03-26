@@ -21,8 +21,8 @@ namespace UKButt
         public float currentLinearTime = 0;
 
         private UnscaledTimeSince _unscaledTimeSinceVibes;
-        private TimeSince _timeSinceVibes;
-        private TimeSince _timeSinceVibeUpdate;
+        private UnscaledTimeSince _timeSinceVibes;
+        private UnscaledTimeSince _timeSinceVibeUpdate;
 
         private float TimeSinceVibes => PrefsManager.Instance.GetBoolLocal(UKButtProperties.UseUnscaledTime, true) ? (float)_unscaledTimeSinceVibes : (float)_timeSinceVibes;
 
@@ -38,7 +38,7 @@ namespace UKButt
         private float LinearTimeMin => PrefsManager.Instance == null ? 0.3f : PrefsManager.Instance.GetFloatLocal(UKButtProperties.LinearTimeMin, 0.3f);
         private float LinearTimeMax => PrefsManager.Instance == null ? 1.5f : PrefsManager.Instance.GetFloatLocal(UKButtProperties.LinearTimeMax, 1.5f);
 
-        private bool StrokeWhileIdle => PrefsManager.Instance == null ? false : PrefsManager.Instance.GetBoolLocal(UKButtProperties.StrokeWhileIdle, false);
+        private bool StrokeWhileIdle => PrefsManager.Instance != null && PrefsManager.Instance.GetBoolLocal(UKButtProperties.StrokeWhileIdle, false);
 
         // Toggle for movement direction state
         private bool _moveMax = true;
@@ -78,7 +78,7 @@ namespace UKButt
         {
             if (buttplugClient != null)
             {
-                Debug.Log("Disconnecting from Buttplug server");
+                Logger.LogInfo("Disconnecting from Buttplug server");
                 await buttplugClient.DisconnectAsync();
                 buttplugClient = null;
             }
@@ -87,8 +87,8 @@ namespace UKButt
             buttplugClient.DeviceAdded += AddDevice;
             buttplugClient.DeviceRemoved += RemoveDevice;
             buttplugClient.ScanningFinished += ScanningFinished;
-
-            Debug.Log("Connecting to Buttplug server");
+            
+            Logger.LogInfo("Connecting to Buttplug server");
             await buttplugClient.ConnectAsync(new ButtplugWebsocketConnectorOptions(new Uri($"{PrefsManager.Instance.GetStringLocal(UKButtProperties.SocketUri, "ws://localhost:12345")}/buttplug")));
 
             var startScanningTask = buttplugClient.StartScanningAsync();
@@ -98,7 +98,7 @@ namespace UKButt
             }
             catch (ButtplugException ex)
             {
-                Debug.LogError($"Scanning failed: {ex.InnerException.Message}");
+                Logger.LogError($"Scanning failed: {ex.InnerException.Message}");
             }
         }
 
@@ -133,6 +133,18 @@ namespace UKButt
             {
                 if (StyleHUD.Instance == null) currentRank = 0;
                 currentSpeed = currentRank / 8f;
+            }
+            else if (InputMode == InputMode.Passthrough)
+            {
+
+                if (OptionsManager.Instance && OptionsManager.Instance.paused)
+                {
+                    currentSpeed = 0;
+                }
+                else
+                {
+                    currentSpeed = RumbleManager.Instance.currentIntensity;
+                }
             }
 
             // This shouldn't be run at more than 10hz, bluetooth can't keep up. Repeated commands will be

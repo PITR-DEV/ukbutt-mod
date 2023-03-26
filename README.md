@@ -12,6 +12,7 @@ UKButt is an official [BepInEx](https://github.com/BepInEx/BepInEx) mod for [ULT
 - **[Configuration](#configuration)**
 - **[Default Values](#default-values)**
 - **[Input Modes](#inputmodes)**
+- **[Passthrough Mode](#passthrough-mode)**
 - **[The buttplug.io standard](https://buttplug.io/)**
 - **[Buttplug.io/Intiface Discord Server (for support questions)](https://discord.buttplug.io)**
 
@@ -65,7 +66,7 @@ or `ukbutt prefs` to get the list of all available preferences and how to change
 <!-- table -->
 
 | Key                         | Type     | Description                                                             | Default                |
-| --------------------------- | -------- | ----------------------------------------------------------------------- | ---------------------- |
+|-----------------------------|----------|-------------------------------------------------------------------------|------------------------|
 | `ukbutt.socketUri`          | `string` | The URI of the Intiface Server.                                         | `ws://localhost:12345` |
 | `ukbutt.strength`           | `float`  | The strength of the vibration.                                          | `0.8`                  |
 | `ukbutt.stickForSeconds`    | `float`  | The minimum duration of a vibration. (in seconds)                       | `2.0`                  |
@@ -84,10 +85,11 @@ or `ukbutt prefs` to get the list of all available preferences and how to change
 <!-- table -->
 
 | Index | Description        |
-| ----- | ------------------ |
+|-------|--------------------|
 | `0`   | Nothing            |
 | `1`   | Varied (_default_) |
 | `2`   | Continuous Rank    |
+| `3`   | Passthrough        |
 
 You can change the input mode in-game by using `prefs set_local int ukbutt.inputMode <index>`
 
@@ -99,6 +101,17 @@ Mode interaction with hardware:
 * Continuous Rank
   * Vibration speed or stroker oscillation frequency is set by current style rank. The higher the
     rank, the faster the vibration or stroking.
+* Passthrough
+  * Vibration will be the same, as what the game sends to standard controllers.
+
+## Passthrough Mode
+
+Note that if you're using the Passthrough mode, the preferences set through the mod won't be used.
+
+In that mode, you can configure the values via the in-game `General > Controller Rumble > Customize` menu.
+
+![img_1.png](https://github.com/PITR-DEV/ukbutt-mod/blob/master/images/ULTRAKILL_kdJQzj2EeB.png)
+
 
 ## Support
 

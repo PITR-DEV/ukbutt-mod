@@ -37,5 +37,5 @@
         public static readonly string StrokeWhileIdle = "ukbutt.strokeWhileIdle";
     }
     
-    public enum InputMode { None = 0, Varied = 1, ContinuousRank = 2 }
+    public enum InputMode { None = 0, Varied = 1, ContinuousRank = 2, Passthrough = 3 }
 }

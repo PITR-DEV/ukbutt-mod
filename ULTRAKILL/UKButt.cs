@@ -4,7 +4,7 @@ using GameConsole;
 
 namespace UKButt.Commands
 {
-    public class UKButt : BetterCommandRoot
+    public class UKButt : CommandRoot
     {
         public override string Name => "UKButt";
         public override string Description => "Buttplug.io support";

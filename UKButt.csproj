@@ -87,13 +87,13 @@
     <Compile Include="PluginInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UKButtProperties.cs" />
-    <Compile Include="ULTRAKILL\Helpers\CommandHelper.cs" />
-    <Compile Include="ULTRAKILL\Helpers\PrefsManagerHelper.cs" />
     <Compile Include="ULTRAKILL\UKButt.cs" />
     <Compile Include="ULTRAKILL\UKButtCycleMode.cs" />
     <Compile Include="ULTRAKILL\UKButtStopCheat.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="img.png" />
+    <Content Include="img_1.png" />
     <Content Include="lib\Buttplug LICENSE.md" />
     <Content Include="lib\ButtplugManaged.dll" />
     <Content Include="lib\ButtplugManaged.pdb" />
