@@ -68,7 +68,7 @@ namespace UKButt
             harmony.PatchAll(typeof(StyleDescendRank));
 
             // Register the command to the ULTRAKILL console
-            GameConsole.Console.Instance.RegisterCommand(new Commands.UKButt());
+            GameConsole.Console.Instance.RegisterCommand(new Commands.UKButt(GameConsole.Console.Instance));
 
             // Connect the buttplug.io client
             Task.Run(RestartClient);
