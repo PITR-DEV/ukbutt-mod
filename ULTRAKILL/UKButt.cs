@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using GameConsole;
+using GameConsole.CommandTree;
 
 namespace UKButt.Commands
 {
@@ -8,8 +9,10 @@ namespace UKButt.Commands
     {
         public override string Name => "UKButt";
         public override string Description => "Buttplug.io support";
+
+        public UKButt(Console con) : base(con) { }
         
-        protected override void BuildTree(Console con)
+        protected override Branch BuildTree(Console con)
         {
             BuildPrefsEditor(new List<PrefReference>
             {
@@ -99,7 +102,7 @@ namespace UKButt.Commands
                 },
             });
             
-            Leaf("restart_client", () =>
+            return Leaf("restart_client", () =>
             {
                 Task.Run(ButtplugManager.Instance.RestartClient);
             });
