@@ -11,6 +11,7 @@ namespace UKButt
     public class ButtplugManager : BaseUnityPlugin
     {
         public static ButtplugManager Instance;
+        public static readonly plog.Logger Log = new plog.Logger("UKButt");
         public bool emergencyStop = false;
 
         private ButtplugClient buttplugClient;
@@ -23,6 +24,10 @@ namespace UKButt
         private UnscaledTimeSince _unscaledTimeSinceVibes;
         private UnscaledTimeSince _timeSinceVibes;
         private UnscaledTimeSince _timeSinceVibeUpdate;
+        
+        // Guh guh
+        private readonly Queue<string> _logQueue = new Queue<string>();
+        private readonly Queue<string> _errorLogQueue = new Queue<string>();
 
         private float TimeSinceVibes => PrefsManager.Instance.GetBoolLocal(UKButtProperties.UseUnscaledTime, true) ? (float)_unscaledTimeSinceVibes : (float)_timeSinceVibes;
 
@@ -51,11 +56,17 @@ namespace UKButt
 
         private void Awake()
         {
-            Logger.LogInfo("Initializing UKButt");
+            gameObject.hideFlags = HideFlags.HideAndDontSave;
+        }
+
+        private void Start()
+        {
+            Log.Info("Initializing UKButt");
             Instance = this;
             // Start at the slowest Linear time.
             _moveTime = LinearTimeMax;
 
+            Log.Info("Patching Game...");
             var harmony = HarmonyLib.Harmony.CreateAndPatchAll(typeof(CameraPatch));
             harmony.PatchAll(typeof(CameraPatch)); // Intercepts shake calls
             harmony.PatchAll(typeof(CheatsPatch)); // Adds the bindable emergency stop cheat
@@ -68,37 +79,63 @@ namespace UKButt
             harmony.PatchAll(typeof(StyleDescendRank));
 
             // Register the command to the ULTRAKILL console
+            Log.Info("Registering \"UKButt\" command");
             GameConsole.Console.Instance.RegisterCommand(new Commands.UKButt(GameConsole.Console.Instance));
 
             // Connect the buttplug.io client
-            Task.Run(RestartClient);
+            Task.Run(ReconnectClient);
         }
 
-        public async void RestartClient()
+        public void TryRestartClient()
         {
-            if (buttplugClient != null)
-            {
-                Logger.LogInfo("Disconnecting from Buttplug server");
-                await buttplugClient.DisconnectAsync();
-                buttplugClient = null;
-            }
+            Log.Info("Restarting Buttplug client...");
+            Task.Run(ReconnectClient);
+        }
 
+        private Uri GetConnectionUri()
+        {
+            return new Uri($"{PrefsManager.Instance.GetStringLocal(UKButtProperties.SocketUri, "ws://localhost:12345")}/buttplug");
+        }
+
+        private async Task TryKillClient()
+        {
+            if (buttplugClient == null) return;
+            _logQueue.Enqueue("Disconnecting from Buttplug server...");
+            buttplugClient.DeviceAdded -= AddDevice;
+            buttplugClient.DeviceRemoved -= RemoveDevice;
+            buttplugClient.ScanningFinished -= ScanningFinished;
+            buttplugClient.ErrorReceived -= ErrorReceived;
+            buttplugClient.ServerDisconnect -= ServerDisconnect;
+
+            if (buttplugClient.IsScanning) await buttplugClient.StopScanningAsync();
+            if (buttplugClient.Connected) await buttplugClient.DisconnectAsync();
+
+            buttplugClient = null;
+        }
+
+        private async Task ReconnectClient()
+        {
+            var uri = GetConnectionUri();
+
+            await TryKillClient();
+            
             buttplugClient = new ButtplugClient("ULTRAKILL");
             buttplugClient.DeviceAdded += AddDevice;
             buttplugClient.DeviceRemoved += RemoveDevice;
             buttplugClient.ScanningFinished += ScanningFinished;
+            buttplugClient.ErrorReceived += ErrorReceived;
+            buttplugClient.ServerDisconnect += ServerDisconnect;
             
-            Logger.LogInfo("Connecting to Buttplug server");
-            await buttplugClient.ConnectAsync(new ButtplugWebsocketConnectorOptions(new Uri($"{PrefsManager.Instance.GetStringLocal(UKButtProperties.SocketUri, "ws://localhost:12345")}/buttplug")));
-
-            var startScanningTask = buttplugClient.StartScanningAsync();
+            _logQueue.Enqueue("Connecting to Buttplug server...");
             try
             {
-                await startScanningTask;
+                await buttplugClient.ConnectAsync(new ButtplugWebsocketConnectorOptions(uri));
+                
+                Task.Run(buttplugClient.StartScanningAsync);
             }
-            catch (ButtplugException ex)
+            catch (Exception ex)
             {
-                Logger.LogError($"Scanning failed: {ex.InnerException.Message}");
+                _errorLogQueue.Enqueue(ex.ToString());
             }
         }
 
@@ -124,6 +161,21 @@ namespace UKButt
 
         private void Update()
         {
+            if (_logQueue.Count > 0 || _errorLogQueue.Count > 0)
+            {
+                while (_logQueue.Count > 0)
+                {
+                    var message = _logQueue.Dequeue();
+                    Log.Info(message);
+                }
+                
+                while (_errorLogQueue.Count > 0)
+                {
+                    var message = _errorLogQueue.Dequeue();
+                    Log.Error(message);
+                }
+            }
+            
             if (buttplugClient == null) return;
             if (emergencyStop) currentSpeed = 0;
 
@@ -214,19 +266,30 @@ namespace UKButt
 
         private void AddDevice(object sender, DeviceAddedEventArgs args)
         {
-            Debug.Log("Device Added: " + args.Device.Name);
+            _logQueue.Enqueue("Device Added: " + args.Device.Name);
             connectedDevices.Add(args.Device);
         }
 
         private void RemoveDevice(object sender, DeviceRemovedEventArgs args)
         {
-            Debug.Log("Device Removed: " + args.Device.Name);
+            _logQueue.Enqueue("Device Removed: " + args.Device.Name);
             connectedDevices.Remove(args.Device);
         }
 
         private void ScanningFinished(object sender, EventArgs args)
         {
-            Debug.Log("Scanning Finished");
+            _logQueue.Enqueue("Scanning Finished");
+        }
+        
+        private void ErrorReceived(object sender, ButtplugExceptionEventArgs args)
+        {
+            _errorLogQueue.Enqueue("Error: " + args.Exception.Message);
+        }
+        
+        private void ServerDisconnect(object sender, EventArgs args)
+        {
+            _logQueue.Enqueue("Server Disconnected");
+            Task.Run(TryKillClient);
         }
 
         private void OnDestroy()

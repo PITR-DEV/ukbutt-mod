@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using GameConsole;
 using GameConsole.CommandTree;
 
 namespace UKButt.Commands
 {
-    public class UKButt : CommandRootBackport
+    public class UKButt : CommandRoot
     {
         public UKButt(Console con) : base(con) { }
         public override string Name => "UKButt";
@@ -105,7 +104,7 @@ namespace UKButt.Commands
                     }),
                     Leaf("restart_client", () =>
                     {
-                        Task.Run(ButtplugManager.Instance.RestartClient);
+                        ButtplugManager.Instance.TryRestartClient();
                     })
                 });
 
