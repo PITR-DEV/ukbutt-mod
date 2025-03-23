@@ -4,7 +4,7 @@ namespace UKButt.Commands
 {
     public class UKButtCycleMode : ICheat
     {
-        public string LongName => "UKButt Input Mode:";
+        public string LongName => "UKButt Input Mode";
         public string Identifier => "ukbutt.cycle-mode";
         public string ButtonEnabledOverride => null;
         public string ButtonDisabledOverride => Enum.GetName(typeof(InputMode), ButtplugManager.Instance.InputMode);
@@ -13,7 +13,7 @@ namespace UKButt.Commands
         public bool DefaultState => false;
         public StatePersistenceMode PersistenceMode => StatePersistenceMode.NotPersistent;
         
-        public void Enable()
+        public void Enable(CheatsManager manager)
         {
             var inputMode = (int)ButtplugManager.Instance.InputMode;
             var modesCount = Enum.GetValues(typeof(InputMode)).Length;
@@ -23,6 +23,5 @@ namespace UKButt.Commands
         }
         
         public void Disable() { } // Not needed
-        public void Update() { } // Not needed
     }
 }

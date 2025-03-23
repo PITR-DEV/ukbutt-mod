@@ -11,11 +11,10 @@
         public bool DefaultState => false;
         public StatePersistenceMode PersistenceMode => StatePersistenceMode.NotPersistent;
         
-        public void Enable()
+        public void Enable(CheatsManager manager)
         {
             ButtplugManager.Instance.emergencyStop = true;
         }
-
         public void Disable()
         {
             ButtplugManager.Instance.emergencyStop = false;

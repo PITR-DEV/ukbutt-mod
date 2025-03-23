@@ -4,6 +4,6 @@
     {
         public const string GUID = "dev.pitr.ukbutt";
         public const string NAME = "UKButt";
-        public const string VERSION = "1.4.0";
+        public const string VERSION = "1.5.0";
     }
 }
